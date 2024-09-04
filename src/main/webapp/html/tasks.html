@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <title>Tasks</title>
     <link href="style/main.css" rel="stylesheet">
-    <script src="script/jquery.js"></script>
-    <script src="script/my.js"></script>
 </head>
 <body>
     <table>
@@ -14,8 +12,7 @@
                 <th>ID</th>
                 <th>Description</th>
                 <th>Status</th>
-                <th></th>
-                <th></th>
+                <th colspan="2">Operations</th>
             </tr>
         </thead>
         <tbody>
@@ -24,10 +21,15 @@
                 <td th:text="${task.description}" th:id="'description_' + ${task.id}"/>
                 <td th:text="${task.status}" th:id="'status_' + ${task.id}"/>
                 <td>
-                    <button th:id="'edit_' + ${task.id}" th:onclick="'edit_task(' + ${task.id} + ')'">Edit</button>
+                    <form th:method="GET" th:action="@{/{id}(id=${task.id})}">
+                        <input type="submit" value="Edit"/>
+                    </form>
                 </td>
                 <td>
-                    <button th:id="'delete_' + ${task.id}" th:onclick="'delete_task(' + ${task.id} + ')'">Delete</button>
+                    <form th:method="DELETE" th:action="@{/{id}(id=${task.id})}">
+                        <input type="submit" value="Delete"/>
+                    </form>
+
                 </td>
             </tr>
         </tbody>

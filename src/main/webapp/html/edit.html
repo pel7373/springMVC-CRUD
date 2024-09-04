@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:form="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit task</title>
+    <link href="style/main.css" rel="stylesheet">
+</head>
+<body>
+<form th:method="PATCH" th:action="@{/{id}(id=${task.getId()})}" th:object="${task}">
+    <label for="description">Edit description</label>
+    <input type="text" th:field="*{description}" id="description">
+    <br/>
+    <label for="status">Choose status</label>
+    <select id="status" th:field="*{status}" name="status">
+        <option th:each="enumm : ${T(org.example.domain.Status).values()}"
+                th:text="${enumm}"
+                th:value = "${enumm}">
+        </option>
+    </select>
+    <input type="submit" value="Edit">
+</form>
+</body>

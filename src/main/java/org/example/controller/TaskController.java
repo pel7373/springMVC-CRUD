@@ -34,19 +34,31 @@ public class TaskController {
             model.addAttribute("page_numbers", pageNumbers);
         }
 
-        return "tavisks";
+        return "tasks";
 
     }
 
-    @PostMapping("/{id}")
+    @GetMapping("/{id}")
     public String edit(Model model,
-                     @PathVariable Integer id,
-                     @RequestBody TaskDTO taskDTO) {
+                     @PathVariable Integer id
+                    //,
+                    // @RequestBody TaskDTO taskDTO
+                    ) {
         if(isNull(id) || id <= 0) {
             throw new RuntimeException("Invalid id");
         }
+        model.addAttribute("task", taskService.getById(id));
+        return "edit";
 
-        Task task = taskService.edit(id, taskDTO.getDescription(), taskDTO.getStatus());
+    }
+
+    @PatchMapping("/{id}")
+    public String update(Model model,
+                         @ModelAttribute("task") Task task,
+                         @PathVariable("id") int id) {
+        System.out.println(task.getStatus());
+        System.out.println(task.getDescription());
+        taskService.edit(id, task.getDescription(), task.getStatus());
         return tasks(model, 1, 10);
     }
 

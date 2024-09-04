@@ -1,6 +1,7 @@
 package org.example.service;
 
 
+import org.example.controller.TaskDTO;
 import org.example.dao.TaskDAO;
 import org.example.domain.Status;
 import org.example.domain.Task;
@@ -31,6 +32,10 @@ public class TaskService {
 
     public int getAllCount() {
         return taskDAO.getAllCount();
+    }
+
+    public Task getById(int id) {
+        return taskDAO.getById(id);
     }
 
     @Transactional
