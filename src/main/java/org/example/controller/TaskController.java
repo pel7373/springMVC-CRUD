@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import org.example.domain.Status;
 import org.example.domain.Task;
 import org.example.service.TaskService;
 import org.springframework.stereotype.Controller;
@@ -29,6 +30,9 @@ public class TaskController {
         model.addAttribute("tasks", tasks);
         model.addAttribute("current_page", page);
         int totalPages = (int) Math.ceil(1.0 * taskService.getAllCount() / limit);
+        if(page == Integer.MAX_VALUE) {
+            model.addAttribute("current_page", totalPages);
+        }
         if(totalPages > 1) {
             List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
             model.addAttribute("page_numbers", pageNumbers);
@@ -54,28 +58,43 @@ public class TaskController {
 
     @PatchMapping("/{id}")
     public String update(Model model,
-                         @ModelAttribute("task") Task task,
+                         @ModelAttribute("taskDTO") TaskDTO taskDTO,
                          @PathVariable("id") int id) {
-        System.out.println(task.getStatus());
-        System.out.println(task.getDescription());
-        taskService.edit(id, task.getDescription(), task.getStatus());
+        taskService.edit(id, taskDTO.getDescription(), taskDTO.getStatus());
         return tasks(model, 1, 10);
     }
 
-    @PostMapping("/")
+    @PostMapping("/add_page")
+    public String goToAddPage(Model model) {
+        Status status = Status.values()[0];
+        TaskDTO taskDTO = new TaskDTO();
+        taskDTO.setStatus(status);
+        model.addAttribute("taskDTO", taskDTO);
+        return "add";
+    }
+
+    @PostMapping("/add_new_task")
     public String add(Model model,
-                     @RequestBody TaskDTO taskDTO) {
-        Task task = taskService.create(taskDTO.getDescription(), taskDTO.getStatus());
+                      @ModelAttribute("taskDTO") TaskDTO taskDTO) {
+                     //@RequestBody TaskDTO taskDTO) {
+        taskService.create(taskDTO.getDescription(), taskDTO.getStatus());
         return tasks(model, 1, 10);
     }
 
     @DeleteMapping("/{id}")
     public String delete(Model model,
-                       @PathVariable Integer id) {
+                       @PathVariable Integer id,
+                         @RequestParam String currentPage
+    ) {
         if(isNull(id) || id <= 0) {
             throw new RuntimeException("Invalid id");
         }
         taskService.delete(id);
-        return tasks(model, 1, 10);
+        int currentPageInt = Integer.parseInt(currentPage);
+        if(currentPageInt < 1) {
+            currentPageInt = 1;
+        }
+
+        return tasks(model, currentPageInt, 10);
     }
 }

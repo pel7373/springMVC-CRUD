@@ -27,13 +27,20 @@
                 </td>
                 <td>
                     <form th:method="DELETE" th:action="@{/{id}(id=${task.id})}">
-                        <input type="submit" value="Delete"/>
+                        <input type="hidden" name="currentPage" th:value="${current_page}">
+                        <input type="submit" value="Delete" />
                     </form>
 
                 </td>
             </tr>
         </tbody>
     </table>
+    <h2>
+        <form th:method="POST" th:action="add_page">
+            <input type="submit" value="Add new task" />
+        </form>
+
+    </h2>
     <h2>
         <button th:each="pageNumber : ${page_numbers}" class="button_page">
             <a th:href="@{/(page=${pageNumber}, limit = 10)}" th:text="${pageNumber}" th:classappend="${pageNumber == current_page? 'active_page' : ''}"></a>
