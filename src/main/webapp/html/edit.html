@@ -6,7 +6,8 @@
     <link href="style/main.css" rel="stylesheet">
 </head>
 <body>
-<form th:method="PATCH" th:action="@{/{id}(id=${task.getId()})}" th:object="${taskDTO}">
+<center><h1>Edit the task</h1>
+<form th:method="PATCH" th:action="@{/{id}(id=${taskDTO.getId()})}" th:object="${taskDTO}">
     <label for="description">Edit description</label>
     <input type="text" th:field="*{description}" id="description">
     <br/>
@@ -18,6 +19,7 @@
         </option>
     </select>
     <br/><br/>
+    <input type="hidden" name="currentPage" th:value="${current_page}">
     <input type="submit" value="Edit task">
 </form>
 </body>

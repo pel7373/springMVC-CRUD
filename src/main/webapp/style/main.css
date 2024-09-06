@@ -7,15 +7,19 @@ td, th {
     text-align: center;
 }
 
+.text2 {
+    color: blue;
+    font-size: medium;
+}
+
 .active_page {
     color: rgba(255, 99, 71, 0.99);
 }
 
 .button_page {
-    color: yellow;
-    border: 1px solid black;
+    border: 1px solid blue;
     margin: 5px;
-    padding: 20px;
-    font-size: large;
+    padding: 10px;
+    font-size: medium;
 }
 

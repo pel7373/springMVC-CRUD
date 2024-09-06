@@ -1,5 +1,6 @@
 package org.example.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
@@ -13,6 +14,10 @@ public class Task {
 
     @Enumerated(EnumType.ORDINAL)
     private Status status;
+
+    private String password;
+
+    private String secretInfo;
 
     public Integer getId() {
         return id;
@@ -36,5 +41,21 @@ public class Task {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getSecretInfo() {
+        return secretInfo;
+    }
+
+    public void setSecretInfo(String secretInfo) {
+        this.secretInfo = secretInfo;
     }
 }

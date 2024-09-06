@@ -7,6 +7,7 @@
 </head>
 <body>
 <br/>
+<center><h1>Add new task</h1>
 <form th:method="POST" th:action="add_new_task" th:object="${taskDTO}">
     <label for="description">Add description</label>
     <input type="text" th:field="*{description}" id="description">

@@ -1,6 +1,8 @@
 package org.example.service;
 
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.controller.TaskDTO;
 import org.example.dao.TaskDAO;
 import org.example.domain.Status;
@@ -9,33 +11,35 @@ import org.example.domain.Task;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.naming.NamingException;
-import javax.naming.Reference;
-import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import static java.util.Objects.isNull;
 
 @Service
 public class TaskService {
     private final TaskDAO taskDAO;
+    ObjectMapper objectMapper = new ObjectMapper();
 
+    {
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
     public TaskService(TaskDAO taskDAO) {
         this.taskDAO = taskDAO;
     }
 
-    public List<Task> getAll(int offset, int limit) {
-        return taskDAO.getAll(offset, limit);
+    public List<TaskDTO> getAll(int offset, int limit) {
+        List<TaskDTO> list = new ArrayList<>();
+        taskDAO.getAll(offset, limit).forEach(task -> list.add(objectMapper.convertValue(task, TaskDTO.class)));
+        return list;
     }
 
     public int getAllCount() {
         return taskDAO.getAllCount();
     }
 
-    public Task getById(int id) {
-        return taskDAO.getById(id);
+    public TaskDTO getById(int id) {
+        return objectMapper.convertValue(taskDAO.getById(id), TaskDTO.class);
     }
 
     @Transactional
@@ -51,10 +55,8 @@ public class TaskService {
         return task;
     }
 
-    public Task create(String description, Status status) {
-        Task task = new Task();
-        task.setDescription(description);
-        task.setStatus(status);
+    public Task create(TaskDTO taskDTO) {
+        Task task = objectMapper.convertValue(taskDTO, Task.class);
         taskDAO.saveOrUpdate(task);
         return task;
     }

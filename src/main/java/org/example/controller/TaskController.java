@@ -1,7 +1,6 @@
 package org.example.controller;
 
 import org.example.domain.Status;
-import org.example.domain.Task;
 import org.example.service.TaskService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +16,7 @@ import static java.util.Objects.isNull;
 @RequestMapping("/")
 public class TaskController {
     private final TaskService taskService;
+    private int tasksPerPage = 10;
 
     public TaskController(TaskService taskService) {
         this.taskService = taskService;
@@ -25,33 +25,43 @@ public class TaskController {
     @GetMapping("/")
     public String tasks(Model model,
                             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
-                            @RequestParam(value = "limit", required = false, defaultValue = "10") int limit) {
-        List<Task> tasks = taskService.getAll((page - 1) * limit, limit);
-        model.addAttribute("tasks", tasks);
+                            @RequestParam(value = "tasks_per_page", required = false, defaultValue = "0") Integer newTasksPerPage) {
+        if(newTasksPerPage > 0) {
+            tasksPerPage = newTasksPerPage;
+        }
+
+        int totalPages = (int) Math.ceil(1.0 * taskService.getAllCount() / tasksPerPage);
+        if(page > totalPages) {
+            page = totalPages;
+        }
+
         model.addAttribute("current_page", page);
-        int totalPages = (int) Math.ceil(1.0 * taskService.getAllCount() / limit);
+        model.addAttribute("tasks_per_page", tasksPerPage);
         if(page == Integer.MAX_VALUE) {
+            page = totalPages;
             model.addAttribute("current_page", totalPages);
         }
+        List<TaskDTO> taskDTOs = taskService.getAll((page - 1) * tasksPerPage, tasksPerPage);
+        model.addAttribute("taskDTOs", taskDTOs);
+
         if(totalPages > 1) {
             List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList());
             model.addAttribute("page_numbers", pageNumbers);
         }
 
         return "tasks";
-
     }
 
     @GetMapping("/{id}")
     public String edit(Model model,
-                     @PathVariable Integer id
-                    //,
-                    // @RequestBody TaskDTO taskDTO
+                     @PathVariable Integer id,
+                       @RequestParam Integer currentPage
                     ) {
         if(isNull(id) || id <= 0) {
             throw new RuntimeException("Invalid id");
         }
-        model.addAttribute("task", taskService.getById(id));
+        model.addAttribute("taskDTO", taskService.getById(id));
+        model.addAttribute("current_page", currentPage);
         return "edit";
 
     }
@@ -59,9 +69,10 @@ public class TaskController {
     @PatchMapping("/{id}")
     public String update(Model model,
                          @ModelAttribute("taskDTO") TaskDTO taskDTO,
-                         @PathVariable("id") int id) {
+                         @PathVariable("id") int id,
+                         @RequestParam Integer currentPage) {
         taskService.edit(id, taskDTO.getDescription(), taskDTO.getStatus());
-        return tasks(model, 1, 10);
+        return tasks(model, currentPage, tasksPerPage);
     }
 
     @PostMapping("/add_page")
@@ -76,25 +87,19 @@ public class TaskController {
     @PostMapping("/add_new_task")
     public String add(Model model,
                       @ModelAttribute("taskDTO") TaskDTO taskDTO) {
-                     //@RequestBody TaskDTO taskDTO) {
-        taskService.create(taskDTO.getDescription(), taskDTO.getStatus());
-        return tasks(model, 1, 10);
+        taskService.create(taskDTO);
+        return tasks(model, Integer.MAX_VALUE, tasksPerPage);
     }
 
     @DeleteMapping("/{id}")
     public String delete(Model model,
                        @PathVariable Integer id,
-                         @RequestParam String currentPage
+                         @RequestParam Integer currentPage
     ) {
         if(isNull(id) || id <= 0) {
             throw new RuntimeException("Invalid id");
         }
         taskService.delete(id);
-        int currentPageInt = Integer.parseInt(currentPage);
-        if(currentPageInt < 1) {
-            currentPageInt = 1;
-        }
-
-        return tasks(model, currentPageInt, 10);
+        return tasks(model, currentPage, tasksPerPage);
     }
 }
