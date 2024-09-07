@@ -24,8 +24,8 @@ public class TaskController {
 
     @GetMapping("/")
     public String tasks(Model model,
-                            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
-                            @RequestParam(value = "tasks_per_page", required = false, defaultValue = "0") Integer newTasksPerPage) {
+                        @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+                        @RequestParam(value = "tasks_per_page", required = false, defaultValue = "0") Integer newTasksPerPage) {
         if(newTasksPerPage > 0) {
             tasksPerPage = newTasksPerPage;
         }
@@ -54,9 +54,9 @@ public class TaskController {
 
     @GetMapping("/{id}")
     public String edit(Model model,
-                     @PathVariable Integer id,
+                       @PathVariable Integer id,
                        @RequestParam Integer currentPage
-                    ) {
+    ) {
         if(isNull(id) || id <= 0) {
             throw new RuntimeException("Invalid id");
         }
@@ -93,7 +93,7 @@ public class TaskController {
 
     @DeleteMapping("/{id}")
     public String delete(Model model,
-                       @PathVariable Integer id,
+                         @PathVariable Integer id,
                          @RequestParam Integer currentPage
     ) {
         if(isNull(id) || id <= 0) {

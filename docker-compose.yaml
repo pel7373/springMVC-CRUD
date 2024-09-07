@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+  server:
+    build: /
+    ports:
+      - '8080:8080'
+
+  bd:
+    image: mysql:8.0.32
+    environment:
+      MYSQL_ROOT_PASSWORD: 'root'
+    ports:
+      - '3306:3306'
