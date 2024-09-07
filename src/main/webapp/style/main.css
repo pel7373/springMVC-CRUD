@@ -1,0 +1,25 @@
+td, th {
+    font-size: large;
+    border: 1px solid green;
+    color: black;
+    margin: 10px;
+    padding: 7px;
+    text-align: center;
+}
+
+.text2 {
+    color: blue;
+    font-size: medium;
+}
+
+.active_page {
+    color: rgba(255, 99, 71, 0.99);
+}
+
+.button_page {
+    border: 1px solid blue;
+    margin: 5px;
+    padding: 10px;
+    font-size: medium;
+}
+

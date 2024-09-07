@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:form="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Add task</title>
+    <link href="style/main.css" rel="stylesheet">
+</head>
+<body>
+<br/>
+<center><h1>Add new task</h1>
+<form th:method="POST" th:action="add_new_task" th:object="${taskDTO}">
+    <label for="description">Add description</label>
+    <input type="text" th:field="*{description}" id="description">
+    <br/>
+    <label for="status">Choose status</label>
+    <select id="status" th:field="*{status}" name="status">
+        <option th:each="enumm : ${T(org.example.domain.Status).values()}"
+                th:text="${enumm}"
+                th:value = "${enumm}">
+        </option>
+    </select>
+    <br/><br/>
+    <input type="submit" value="Add task">
+</form>
+</body>
+</html>

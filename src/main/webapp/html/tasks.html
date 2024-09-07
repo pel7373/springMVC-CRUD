@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tasks</title>
+    <link href="style/main.css" rel="stylesheet">
+</head>
+<body>
+<center><h1>List of tasks</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th colspan="2">Operations</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each = "taskDTO, number : ${taskDTOs}">
+            <td th:text="${taskDTO.id}"></td>
+            <td th:text="${taskDTO.description}"/>
+            <td th:text="${taskDTO.status}"/>
+
+            <td>
+                <form th:method="GET" th:action="@{/{id}(id=${taskDTO.id})}">
+                    <input type="hidden" name="currentPage" th:value="${current_page}">
+                    <input type="submit" value="Edit"/>
+                </form>
+            </td>
+            <td>
+                <form th:method="DELETE" th:action="@{/{id}(id=${taskDTO.id})}">
+                    <input type="hidden" name="currentPage" th:value="${current_page}">
+                    <input type="submit" value="Delete" />
+                </form>
+
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <br>
+    <form th:method="POST" th:action="add_page">
+        <input type="submit" value="Add new task"/>
+    </form>
+
+    <br/>
+
+    <form th:method="GET" th:action="@{/}">
+        <label for="tasks_per_page">Tasks per page</label>
+        <input type="text" th:name="tasks_per_page" th:value="${tasks_per_page}" id="tasks_per_page"/>
+        <input type="submit" value="Ok"/>
+    </form>
+
+    <br>
+    <button th:each="pageNumber : ${page_numbers}" class="button_page">
+        <a th:href="@{/(page=${pageNumber}, limit = 0)}" th:text="${pageNumber}" th:classappend="${pageNumber == current_page? 'active_page' : ''}"></a>
+    </button>
+
+</center>
+</body>
+</html>
